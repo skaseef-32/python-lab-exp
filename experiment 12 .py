@@ -1,0 +1,78 @@
+import sqlite3  #[span_1](start_span)[span_1](end_span)
+def create_table():  #[span_4](start_span)[span_4](end_span)
+    conn = sqlite3.connect('students.db')  #[span_5](start_span)[span_5](end_span)
+    cursor = conn.cursor()  #[span_6](start_span)[span_6](end_span)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS student (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        age INTEGER NOT NULL,
+        course TEXT NOT NULL
+    )
+    """)  #[span_7](start_span)[span_7](end_span)
+    conn.commit()  #[span_8](start_span)[span_8](end_span)
+    conn.close()  #[span_9](start_span)[span_9](end_span)
+
+def insert_record(name, age, course):  #[span_10](start_span)[span_10](end_span)
+    conn = sqlite3.connect('students.db')  #[span_11](start_span)[span_11](end_span)
+    cursor = conn.cursor()  #[span_12](start_span)[span_12](end_span)
+    cursor.execute("INSERT INTO student (name, age, course) VALUES (?, ?, ?)", (name, age, course))  #[span_13](start_span)[span_13](end_span)
+    conn.commit()  #[span_14](start_span)[span_14](end_span)
+    conn.close()  #[span_15](start_span)[span_15](end_span)
+
+def search_record_by_id(student_id):  #[span_16](start_span)[span_16](end_span)
+    conn = sqlite3.connect('students.db')  #[span_17](start_span)[span_17](end_span)
+    cursor = conn.cursor()  #[span_18](start_span)[span_18](end_span)
+    cursor.execute("SELECT * FROM student WHERE id = ?", (student_id,))  #[span_19](start_span)[span_19](end_span)
+    record = cursor.fetchone()  #[span_20](start_span)[span_20](end_span)
+    conn.close()  #[span_21](start_span)[span_21](end_span)
+    return record  #[span_22](start_span)[span_22](end_span)
+
+def search_record_by_name(name):  #[span_23](start_span)[span_23](end_span)
+    conn = sqlite3.connect('students.db')  #[span_24](start_span)[span_24](end_span)
+    cursor = conn.cursor()  #[span_25](start_span)[span_25](end_span)
+    cursor.execute("SELECT * FROM student WHERE name LIKE ?", ('%' + name + '%',))  #[span_26](start_span)[span_26](end_span)
+    records = cursor.fetchall()  #[span_27](start_span)[span_27](end_span)
+    conn.close()  #[span_28](start_span)[span_28](end_span)
+    return records  #[span_29](start_span)[span_29](end_span)
+
+def main():  #[span_30](start_span)[span_30](end_span)
+    create_table()  #[span_31](start_span)[span_31](end_span)
+    while True:  #[span_32](start_span)[span_32](end_span)
+        print("\n1. Insert Record")  #[span_33](start_span)[span_33](end_span)
+        print("2. Search by ID")  #[span_34](start_span)[span_34](end_span)
+        print("3. Search by Name")  #[span_35](start_span)[span_35](end_span)
+        print("4. Exit")  #[span_36](start_span)[span_36](end_span)
+        
+        choice = input("Enter your choice: ")  #[span_37](start_span)[span_37](end_span)
+        
+        if choice == '1':  #[span_38](start_span)[span_38](end_span)
+            name = input("Enter name: ")  #[span_39](start_span)[span_39](end_span)
+            age = int(input("Enter age: "))  #[span_40](start_span)[span_40](end_span)
+            course = input("Enter course: ")  #[span_41](start_span)[span_41](end_span)
+            insert_record(name, age, course)  #[span_42](start_span)[span_42](end_span)
+            print("Record inserted successfully.")  #[span_43](start_span)[span_43](end_span)
+        elif choice == '2':  #[span_44](start_span)[span_44](end_span)
+            student_id = int(input("Enter student ID to search: "))  #[span_45](start_span)[span_45](end_span)
+            record = search_record_by_id(student_id)  #[span_46](start_span)[span_46](end_span)
+            if record:  #[span_47](start_span)[span_47](end_span)
+                print(f"Record found: ID: {record[0]}, Name: {record[1]}, Age: {record[2]}, Course: {record[3]}")  #[span_48](start_span)[span_48](end_span)
+            else:  #[span_49](start_span)[span_49](end_span)
+                print("No record found with that ID.")  #[span_50](start_span)[span_50](end_span)
+        elif choice == '3':  #[span_51](start_span)[span_51](end_span)
+            name = input("Enter student name to search: ")  #[span_52](start_span)[span_52](end_span)
+            records = search_record_by_name(name)  #[span_53](start_span)[span_53](end_span)
+            if records:  #[span_54](start_span)[span_54](end_span)
+                print("Matching Records:")  #[span_55](start_span)[span_55](end_span)
+                for r in records:  #[span_56](start_span)[span_56](end_span)
+                    print(f"ID: {r[0]}, Name: {r[1]}, Age: {r[2]}, Course: {r[3]}")  #[span_57](start_span)[span_57](end_span)
+            else:  #[span_58](start_span)[span_58](end_span)
+                print("No record found with that name.")  #[span_59](start_span)[span_59](end_span)
+        elif choice == '4':  #[span_60](start_span)[span_60](end_span)
+            print("Exiting program.")  #[span_61](start_span)[span_61](end_span)
+            break  #[span_62](start_span)[span_62](end_span)
+        else:  #[span_63](start_span)[span_63](end_span)
+            print("Invalid choice. Try again.")  #[span_64](start_span)[span_64](end_span)
+
+if __name__ == "__main__":
+    main()
